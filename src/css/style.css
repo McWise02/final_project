@@ -1,0 +1,53 @@
+.inspiration-section {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 2rem;
+    justify-content: space-between;
+}
+.inspiration-section .quote-box,
+.inspiration-section .image-box {
+    flex: 1 1 45%;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    min-height: 200px;
+}
+.quote-box p {
+    font-size: 1.2rem;
+    font-style: italic;
+}
+#current-plan {
+    background-color: #eef6ff;
+    padding: 1.5rem;
+    border-radius: 10px;
+}
+footer {
+    margin-top: 3rem;
+    padding: 1rem;
+    text-align: center;
+    background-color: #f1f1f1;
+    font-size: 0.9rem;
+}
+
+/* keep it basic */
+table { border-collapse: collapse; table-layout: fixed; width: 100%; }
+th, td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+th:first-child, td:first-child { text-align: left; width: 100px; }
+th.slot, td.slot { width: 24px; padding: 0; }
+td.filled { background: #8fd18f; }
+
+.table-responsive {
+  overflow-x: auto;            /* horizontal scroll */
+  border: 1px solid #eee;
+  border-radius: 6px; 
+}
+
+.plan-card .card-body {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.plan-card table {
+  min-width: 900px; /* or whatever covers all columns */
+}
