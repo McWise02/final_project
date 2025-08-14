@@ -1,15 +1,16 @@
 import { insertHeaderFooter } from "../js/util.mjs";
+
 const randomActivityBtn = document.getElementById("randomActivityBtn");
 let hasClearedPlaceholder = false;
 const activityDisplay = document.getElementById("activityDisplay");
 
 const PLANS_KEY = "plans_v1";
-const JSON_URL = "/json/activities.json"; // <-- change if needed
-const RESULTS_LIMIT = 10; // how many results to show
+const JSON_URL = "/json/activities.json"; 
+const RESULTS_LIMIT = 10; 
 const scheduleHeaderRow = document.getElementById("scheduleHeaderRow");
 const scheduleBody = document.getElementById("scheduleBody");
 
-// new buttons
+
 const createBtn = document.getElementById("createBtn");
 const saveBtn = document.getElementById("saveBtn");
 const clearBtn = document.getElementById("clearBtn");
@@ -18,9 +19,9 @@ const searchinput = document.getElementById("activitySearch");
 const btn = document.getElementById("searchActivityBtn");
 const box = document.getElementById("activityResults");
 
-// ===== config =====
+
 const SLOT_MINUTES = 30;
-const VISIBLE_COLUMNS = 16; // 8 hours * 30-minute blocks
+const VISIBLE_COLUMNS = 16; 
 const STORAGE_KEY = "schedule_v1";
 
 // Helpers
@@ -36,33 +37,31 @@ function addMinutes(date, mins) {
   return d;
 }
 
-// Activity model (with completed flag)
+
 class Activity {
   constructor({ id, name, requiredSlots, startSlot, completed = false, createdAt = new Date().toISOString() }) {
     this.id = id || (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()));
     this.name = name;
-    this.requiredSlots = requiredSlots; // number of 30-min blocks
-    this.startSlot = startSlot;         // 1..16
+    this.requiredSlots = requiredSlots; 
+    this.startSlot = startSlot;
     this.completed = completed;
     this.createdAt = createdAt;
   }
 }
 
-// Schedule class — NOTE: no auto-save anywhere
 class Schedule {
   constructor({ slotMinutes, visibleColumns, headerRowEl, bodyEl }) {
     this.slotMinutes = slotMinutes;
     this.visibleColumns = visibleColumns;
     this.headerRowEl = headerRowEl;
     this.bodyEl = bodyEl;
-
-    this.baseTime = nextFullHour(); // for header labels
-    this.slotMap = {};              // 1..visibleColumns -> boolean
-    this.activities = [];           // Activity[]
+    this.baseTime = nextFullHour(); 
+    this.slotMap = {};            
+    this.activities = [];        
   }
 
   startNew() {
-    // reset current plan (does NOT save)
+
     this.slotMap = {};
     for (let i = 1; i <= this.visibleColumns; i++) this.slotMap[i] = false;
     this.activities = [];
@@ -86,7 +85,6 @@ class Schedule {
     this.activities.forEach(a => this.appendRow(a));
   }
 
-  // scan for contiguous free block
   findNextFreeBlock(requiredSlots) {
     for (let start = 1; start <= this.visibleColumns - requiredSlots + 1; start++) {
       let allFree = true;
@@ -210,6 +208,10 @@ randomActivityBtn.addEventListener("click", async () => {
     const durationOptions = [1, 2, 3, 4, 5,6]; // 30m..4h
     const requiredSlots = durationOptions[Math.floor(Math.random() * durationOptions.length)];
 
+
+
+    let action = schedule.addActivity(activityData.activity, requiredSlots);
+    if (action) {
     const card = document.createElement("div");
     card.className = "border rounded p-3 mb-3 bg-light text-start";
     card.innerHTML = `
@@ -217,15 +219,16 @@ randomActivityBtn.addEventListener("click", async () => {
       <p><strong>Duration:</strong> ${requiredSlots * SLOT_MINUTES} minutes</p>
     `;
     activityDisplay.appendChild(card);
-
-    schedule.addActivity(activityData.activity, requiredSlots);
+    }
   } catch (error) {
     console.error("Error fetching activity:", error);
   }
 });
 
 async function fetchRandomActivity() {
-  const res = await fetch("https://bored-api.appbrewery.com/random");
+  const target = `https://bored-api.appbrewery.com/random?_=${Date.now()}`;
+  const proxy  = `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`;
+  const res = await fetch(proxy);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return await res.json();
 }
