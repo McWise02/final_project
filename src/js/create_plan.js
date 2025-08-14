@@ -4,8 +4,8 @@ let hasClearedPlaceholder = false;
 const activityDisplay = document.getElementById("activityDisplay");
 
 const PLANS_KEY = "plans_v1";
-
-
+const JSON_URL = "/json/activities.json"; // <-- change if needed
+const RESULTS_LIMIT = 10; // how many results to show
 const scheduleHeaderRow = document.getElementById("scheduleHeaderRow");
 const scheduleBody = document.getElementById("scheduleBody");
 
@@ -14,6 +14,9 @@ const createBtn = document.getElementById("createBtn");
 const saveBtn = document.getElementById("saveBtn");
 const clearBtn = document.getElementById("clearBtn");
 const saveNotice = document.getElementById("saveNotice");
+const searchinput = document.getElementById("activitySearch");
+const btn = document.getElementById("searchActivityBtn");
+const box = document.getElementById("activityResults");
 
 // ===== config =====
 const SLOT_MINUTES = 30;
@@ -221,22 +224,25 @@ randomActivityBtn.addEventListener("click", async () => {
   }
 });
 
-// Live API (no timeout)
-// async function fetchRandomActivity() {
-//   const res = await fetch("https://bored-api.appbrewery.com/random");
-//   if (!res.ok) throw new Error(`API error: ${res.status}`);
-//   return await res.json();
-// }
-
 async function fetchRandomActivity() {
-  return {
-    activity: "Learn Express.js",
-    type: "education",
-    participants: 1,
-    price: 0.1,
-    link: "https://expressjs.com/",
-  };
+  const res = await fetch("https://bored-api.appbrewery.com/random");
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return await res.json();
 }
+
+
+function handleActivitySelect(activityData) {
+  const requiredSlots = activityData.duration;
+  const card = document.createElement("div");
+  card.className = "border rounded p-3 mb-3 bg-light text-start";
+  card.innerHTML = `
+    <h5>${activityData.activity}</h5>
+    <p><strong>Duration:</strong> ${requiredSlots * SLOT_MINUTES} minutes</p>
+  `;
+  activityDisplay.appendChild(card);
+  schedule.addActivity(activityData.activity, requiredSlots);
+  }
+
 
 
 // ===== buttons =====
@@ -267,6 +273,69 @@ function getAllPlans() {
   catch { return []; }
 }
 
+function renderResults(items) {
+  // uses the already-declared `box` element
+  box.innerHTML = "";
+
+  if (!items.length) {
+    box.classList.remove("show");
+    return;
+  }
+
+  items.forEach(item => {
+    const btnEl = document.createElement("button");
+    btnEl.type = "button";
+    btnEl.className = "dropdown-item text-wrap";
+    btnEl.innerHTML = `
+      <div class="fw-semibold">${item.activity}</div>
+      <div class="small text-muted">Type: ${item.type} · Duration: ${item.duration} · Participants: ${item.participants}</div>
+    `;
+    btnEl.addEventListener("click", () => {
+      handleActivitySelect(item);
+      searchinput.value = "";
+      box.classList.remove("show");
+    });
+    box.appendChild(btnEl);
+  });
+
+  box.classList.add("show");
+}
+
+
+
+function normalize(str) {
+  return String(str || "").toLowerCase().trim();
+}
+
+
+async function searchActivities(query) {
+  const q = normalize(query);
+  if (!q) return [];
+
+  try {
+    const res = await fetch(JSON_URL); // fetch fresh each time
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const activities = await res.json();
+
+    return activities
+      .filter(a => {
+        const name = normalize(a.activity);
+        const type = normalize(a.type);
+        const durStr = String(a.duration ?? "").toLowerCase(); // handle number or string
+        return (
+          name.includes(q) ||
+          type.includes(q) ||
+          durStr === q ||          // exact match, e.g. "3"
+          durStr.includes(q)       // lenient, if duration stored as string
+        );
+      })
+      .slice(0, RESULTS_LIMIT);
+  } catch (err) {
+    console.error("Failed to fetch activities:", err);
+    return [];
+  }
+}
+
 
 
 function saveCurrentPlanAsNew(name = new Date().toLocaleString("de-DE")) {
@@ -285,5 +354,19 @@ function saveCurrentPlanAsNew(name = new Date().toLocaleString("de-DE")) {
   localStorage.setItem(PLANS_KEY, JSON.stringify(plans));
 }
 
+async function runSearch() {
+  
+    const q = searchinput.value;
+    console.log("Searching for:", q);
+    const results = await searchActivities(q);
+    renderResults(results);
+  }
+
+
+btn.addEventListener("click", runSearch);
+document.addEventListener("click", (e) => {
+  const within = e.target.closest('.position-relative');
+  if(!within) box.classList.remove("show");
+});
 
 insertHeaderFooter()
