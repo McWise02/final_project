@@ -35,7 +35,7 @@ footer {
 table { border-collapse: collapse; table-layout: fixed; width: 100%; }
 th, td { border: 1px solid #ddd; padding: 4px; text-align: center; }
 th:first-child, td:first-child { text-align: left; width: 100px; }
-th.slot, td.slot { width: 24px; padding: 0; }
+th.slot, td.slot { width: 50px; padding: 0; }
 td.filled { background: #8fd18f; }
 
 .table-responsive {
