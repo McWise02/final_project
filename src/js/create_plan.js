@@ -200,10 +200,6 @@ randomActivityBtn.addEventListener("click", async () => {
   try {
     const activityData = await fetchRandomActivity();
 
-    if (!hasClearedPlaceholder) {
-      activityDisplay.innerHTML = "";
-      hasClearedPlaceholder = true;
-    }
 
     const durationOptions = [1, 2, 3, 4, 5,6]; 
     const requiredSlots = durationOptions[Math.floor(Math.random() * durationOptions.length)];
