@@ -75,8 +75,11 @@ findBtn.addEventListener("click", async () => {
     if (!place) {
         activityBox.textContent = "No nearby activity found.";
         return;
-    }
 
+    
+
+    }
+    document.getElementById("activity-box").classList.add("loaded");
     console.log(place)
 
     selectedActivity = {

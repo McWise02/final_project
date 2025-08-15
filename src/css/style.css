@@ -51,3 +51,29 @@ td.filled { background: #8fd18f; }
 .plan-card table {
   min-width: 900px; /* or whatever covers all columns */
 }
+
+#activity-box {
+  position: relative;
+}
+
+#activity-box::after {
+  content: "";
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  margin-left: 0.5rem;
+  border: 2px solid #bbb;
+  border-top-color: #0d6efd; /* Bootstrap primary blue */
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: -0.125rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Optional: when you have an activity, add .loaded to hide the spinner */
+#activity-box.loaded::after {
+  display: none;
+}
