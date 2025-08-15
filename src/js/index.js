@@ -1,7 +1,7 @@
 import { insertHeaderFooter } from "../js/util.mjs";
 const unsplash_key = import.meta.env.VITE_UNSPLASH_API_KEY;
 const PLANS_KEY = "plans_v1";
-
+const url = "https://quotes15.p.rapidapi.com/quotes/random/?language_code=en";
 
 
 function formatDT(iso) {
@@ -13,15 +13,34 @@ function getAllPlans() {
   catch { return []; }
 }
 
+const options = {
+	method: "GET",
+	headers: {
+		"x-rapidapi-key": "f7b2c7458dmshec854bed9253511p1fc532jsn5f12f98561ed",
+		"x-rapidapi-host": "quotes15.p.rapidapi.com"
+	}
+};
+
+try {
+	const response = await fetch(url, options);
+	const result = await response.json();
+	console.log(result);
+  document.getElementById("quote").textContent = `"${result.content}"`;
+  document.getElementById("author").textContent = `— ${result.originator.name}`;
+} catch (error) {
+	console.error(error);
+  document.getElementById("quote").textContent = "Could not load quote.";
+}
+// Fetch ran
 // Fetch quote
 fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent("https://zenquotes.io/api/random"))
     .then(res => res.json())
     .then(data => {
-    document.getElementById("quote").textContent = `"${data[0].q}"`;
-    document.getElementById("author").textContent = `— ${data[0].a}`;
+    
+    
     })
     .catch(() => {
-    document.getElementById("quote").textContent = "Could not load quote.";
+    
     });
 
 // Fetch random image from Unsplash (you can replace with your image API)
