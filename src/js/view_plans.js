@@ -23,7 +23,6 @@ function renderPlans() {
     container.innerHTML = "";
     emptyMsg.style.display = plans.length ? "none" : "block";
 
-    // newest first
     plans.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
 
     for (const p of plans) {
@@ -63,7 +62,7 @@ function renderPlans() {
     }
 }
 
-// Toggle completion & delete using event delegation
+
 document.getElementById("plansContainer").addEventListener("change", (e) => {
     const t = e.target;
     if (t.matches('input[type="checkbox"][data-action="toggle-activity"]')) {
@@ -81,7 +80,7 @@ document.getElementById("plansContainer").addEventListener("change", (e) => {
     act.completed = completed;
     savePlans(plans);
 
-    // update row style
+
     const row = t.closest("tr");
     if (row) row.classList.toggle("completed-row", completed);
     }
@@ -103,7 +102,7 @@ document.getElementById("plansContainer").addEventListener("click", (e) => {
 
 
 function buildPlanGridTable(p) {
-  const COLUMNS = 16; // 8 hours × 30-min
+  const COLUMNS = 16; 
   const table = document.createElement("table");
   table.className = "table table-bordered mb-0 plan-grid";
 
@@ -129,7 +128,7 @@ function buildPlanGridTable(p) {
   thead.appendChild(headRow);
   table.appendChild(thead);
 
-  // TBODY
+
   const tbody = document.createElement("tbody");
 
   (p.activities || []).forEach(a => {
@@ -160,6 +159,6 @@ function buildPlanGridTable(p) {
 }
 
 
-// initial render
+
 renderPlans();
 insertHeaderFooter();
