@@ -107,7 +107,7 @@ class Schedule {
     const activity = new Activity({ name, requiredSlots, startSlot: start });
     this.activities.push(activity);
     this.appendRow(activity);
-    return activity; // NOT saved yet
+    return activity; 
   }
 
   toggleCompleted(id, completed) {
@@ -116,7 +116,7 @@ class Schedule {
     a.completed = completed;
     const row = this.bodyEl.querySelector(`tr[data-id="${id}"]`);
     if (row) row.classList.toggle("completed", completed);
-    // NOT saving automatically
+ 
   }
 
   appendRow(activity) {
@@ -124,7 +124,7 @@ class Schedule {
     tr.dataset.id = activity.id;
     if (activity.completed) tr.classList.add("completed");
 
-    // First cell: checkbox + name
+   
     const nameTd = document.createElement("td");
     const cb = document.createElement("input");
     cb.type = "checkbox";
@@ -136,7 +136,7 @@ class Schedule {
     nameTd.appendChild(label);
     tr.appendChild(nameTd);
 
-    // 16 columns; fill solid green for used blocks
+  
     for (let i = 1; i <= this.visibleColumns; i++) {
       const td = document.createElement("td");
       td.className = "slot";
@@ -149,7 +149,7 @@ class Schedule {
     this.bodyEl.appendChild(tr);
   }
 
-  // Manual persistence
+
   save() {
     const data = {
       baseTime: this.baseTime.toISOString(),
@@ -176,7 +176,7 @@ class Schedule {
   }
 
   clearCurrentPlan() {
-    this.startNew(); // reset current UI state; does NOT touch saved copy
+    this.startNew(); 
   }
 
   clearSavedCopy() {
@@ -184,7 +184,7 @@ class Schedule {
   }
 }
 
-// ===== init schedule =====
+
 const schedule = new Schedule({
   slotMinutes: SLOT_MINUTES,
   visibleColumns: VISIBLE_COLUMNS,
@@ -192,10 +192,10 @@ const schedule = new Schedule({
   bodyEl: scheduleBody
 });
 
-// Load previously saved plan if present; otherwise start fresh
+
 if (!schedule.load()) schedule.startNew();
 
-// ===== random activity demo =====
+
 randomActivityBtn.addEventListener("click", async () => {
   try {
     const activityData = await fetchRandomActivity();
@@ -205,7 +205,7 @@ randomActivityBtn.addEventListener("click", async () => {
       hasClearedPlaceholder = true;
     }
 
-    const durationOptions = [1, 2, 3, 4, 5,6]; // 30m..4h
+    const durationOptions = [1, 2, 3, 4, 5,6]; 
     const requiredSlots = durationOptions[Math.floor(Math.random() * durationOptions.length)];
 
 
@@ -248,7 +248,7 @@ function handleActivitySelect(activityData) {
 
 
 
-// ===== buttons =====
+
 saveBtn.addEventListener("click", () => {
   const name = prompt("Name this plan:", new Date().toLocaleString("de-DE")) || "Untitled Plan";
   saveCurrentPlanAsNew(name);        // append to PLANS_KEY array
@@ -264,9 +264,9 @@ clearBtn.addEventListener("click", () => {
 });
 
 createBtn.addEventListener("click", () => {
-  // optional: reset start time to next full hour for the new plan
+
   schedule.baseTime = nextFullHour();
-  schedule.startNew();               // clears current plan (UI + memory), keeps saved ones
+  schedule.startNew();               
 });
 
 
@@ -277,7 +277,7 @@ function getAllPlans() {
 }
 
 function renderResults(items) {
-  // uses the already-declared `box` element
+
   box.innerHTML = "";
 
   if (!items.length) {
@@ -316,7 +316,7 @@ async function searchActivities(query) {
   if (!q) return [];
 
   try {
-    const res = await fetch(JSON_URL); // fetch fresh each time
+    const res = await fetch(JSON_URL); 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const activities = await res.json();
 
@@ -324,12 +324,12 @@ async function searchActivities(query) {
       .filter(a => {
         const name = normalize(a.activity);
         const type = normalize(a.type);
-        const durStr = String(a.duration ?? "").toLowerCase(); // handle number or string
+        const durStr = String(a.duration ?? "").toLowerCase(); 
         return (
           name.includes(q) ||
           type.includes(q) ||
-          durStr === q ||          // exact match, e.g. "3"
-          durStr.includes(q)       // lenient, if duration stored as string
+          durStr === q ||          
+          durStr.includes(q)       
         );
       })
       .slice(0, RESULTS_LIMIT);
@@ -368,7 +368,7 @@ async function runSearch() {
 
 btn.addEventListener("click", runSearch);
 document.addEventListener("click", (e) => {
-  const within = e.target.closest('.position-relative');
+  const within = e.target.closest(".position-relative");
   if(!within) box.classList.remove("show");
 });
 

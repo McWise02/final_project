@@ -31,8 +31,7 @@ try {
 	console.error(error);
   document.getElementById("quote").textContent = "Could not load quote.";
 }
-// Fetch ran
-// Fetch quote
+
 fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent("https://zenquotes.io/api/random"))
     .then(res => res.json())
     .then(data => {
@@ -43,7 +42,7 @@ fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent("https://zenquo
     
     });
 
-// Fetch random image from Unsplash (you can replace with your image API)
+
 
 fetch(`https://api.unsplash.com/photos/random?query=motivation&client_id=${unsplash_key}`)
   .then((res) => res.json())
@@ -53,7 +52,7 @@ fetch(`https://api.unsplash.com/photos/random?query=motivation&client_id=${unspl
   })
   .catch((error) => console.error("Error fetching image:", error));
 
-// Simulated check for existing plan from localStorage
+
 const plans = getAllPlans();
 
 if (plans.length > 0) {
